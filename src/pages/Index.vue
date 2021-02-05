@@ -7,7 +7,7 @@
           multiple
           filled
           type="file"
-          hint="Upload multiple CSV files"
+          hint="Only PropertyShark CSV files are currently supported."
         />
       </q-card-section>
 
@@ -42,7 +42,6 @@ export default defineComponent({
   components: {},
   setup () {
     const files = ref([])
-    // const fileReaders = ref([])
 
     const transform = () => {
       const fs: Array<File> = Array.from(files.value)
@@ -50,11 +49,11 @@ export default defineComponent({
       fs.forEach(f => {
         new CsvTransformer(f).transform()
       })
+      files.value = []
     }
 
     return {
       files,
-      // fileReaders,
       transform
     }
   }
