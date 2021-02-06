@@ -1,20 +1,19 @@
 import CsvFile from './CsvFile'
 import { ColumnMap } from './ColumnMap'
+import { TransformedCsv } from './models'
 
 export default class CsvTransformer {
-  file: File
+  output: TransformedCsv
   reader: FileReader
   fileContent: string
-  baseFileName: string
   transformedContent: string
   targetHeaders: Array<string>
   maxCols: number
 
-  constructor (file: File) {
-    this.file = file
+  constructor (output: TransformedCsv) {
+    this.output = output
     this.reader = new FileReader()
     this.fileContent = ''
-    this.baseFileName = file.name.replace('.csv', '')
     this.transformedContent = ''
     this.targetHeaders = [
       'First Name',
@@ -29,15 +28,17 @@ export default class CsvTransformer {
     this.maxCols = this.targetHeaders.length
   }
 
-  transform () {
-    this.reader.readAsText(this.file)
+  transform (file: File | null) {
+    if (!file) return
+    this.reader.readAsText(file)
 
     this.reader.onload = () => {
       this.fileContent = this.reader.result?.toString() || ''
       if (!this.fileContent) throw new Error('Failed to transform file')
 
       this.transformCsvFile()
-      this.triggerDownload()
+      this.output.transformedContent = this.transformedContent
+      // this.triggerDownload(file)
     }
   }
 
@@ -51,12 +52,13 @@ export default class CsvTransformer {
     })
   }
 
-  triggerDownload () {
+  triggerDownload (file: File) {
+    const baseFileName = file.name.replace('.csv', '')
     const tempEl = document.createElement('a')
     const csvContent = encodeURI(this.transformedContent)
 
     tempEl.href = `data:text/csv;charset=utf-8,${csvContent}`
-    tempEl.download = `${this.baseFileName}-transformed.csv`
+    tempEl.download = `${baseFileName}-transformed.csv`
     tempEl.click()
   }
 

@@ -1,3 +1,6 @@
+export interface TransformedCsv {
+  transformedContent: string;
+}
 export interface Todo {
   id: number;
   content: string;
