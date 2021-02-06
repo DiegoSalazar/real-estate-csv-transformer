@@ -28,7 +28,7 @@ export default class CsvTransformer {
     this.maxCols = this.targetHeaders.length
   }
 
-  transform (file: File | null) {
+  transform (file: File) {
     if (!file) return
     this.reader.readAsText(file)
 
@@ -38,8 +38,11 @@ export default class CsvTransformer {
 
       this.transformCsvFile()
       this.output.transformedContent = this.transformedContent
-      // this.triggerDownload(file)
     }
+  }
+
+  display () {
+    this.output.transformedContent = this.transformedContent
   }
 
   transformCsvFile () {

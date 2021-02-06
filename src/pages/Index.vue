@@ -47,7 +47,7 @@ import CsvTransformer from '../components/CsvTransformer'
 export default defineComponent({
   components: {},
   setup () {
-    const file = reactive({ f: null, content: 'Loading...' })
+    const file = reactive({ f: [], content: 'Loading...' })
     const submittedCsv = reactive({ transformedContent: 'Loading Content...' })
 
     const transform = () => {
