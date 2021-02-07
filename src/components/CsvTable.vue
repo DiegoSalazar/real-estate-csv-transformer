@@ -1,8 +1,10 @@
 <template>
   <q-table
+    style="width: 100%"
     :title="title"
     :columns="columns"
     :data="data"
+    :pagination="{ rowsPerPage: 4 }"
   >
     <template v-slot:top>
       <div class="col-2 q-table__title">{{ title }}</div>
