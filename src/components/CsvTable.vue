@@ -5,7 +5,7 @@
     :data="data"
   >
     <template v-slot:top>
-      <div class="col-1 q-table__title">{{ title }}</div>
+      <div class="col-2 q-table__title">{{ title }}</div>
       <q-btn
         v-if="showDownload"
         color="secondary"
