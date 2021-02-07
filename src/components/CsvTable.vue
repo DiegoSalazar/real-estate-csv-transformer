@@ -20,7 +20,6 @@ import { defineComponent } from '@vue/composition-api'
 import { CsvHeaders } from './models'
 
 export default defineComponent({
-  name: 'CsvTable',
   props: {
     showDownload: { type: Boolean },
     title: {
@@ -52,10 +51,9 @@ export default defineComponent({
     const data = rows.reduce((arr: CsvHeaders[], row) => {
       const rowData = <CsvHeaders>{}
       const tableRow = headers.map((header: string, i) => {
-        rowData[header] = row[i]
+        rowData[header] = (row[i] || '').replace('"', '')
         return rowData
       })
-
       return arr.concat(tableRow)
     }, [])
 

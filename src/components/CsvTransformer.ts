@@ -122,11 +122,11 @@ export default class CsvTransformer {
     description += `\n${propShark}`
 
     const transformedRow = []
-    transformedRow[ColumnMap.A] = `"${firstName}"`
-    transformedRow[ColumnMap.B] = `"${lastName}"`
-    transformedRow[ColumnMap.C] = `"${email}"`
-    transformedRow[ColumnMap.D] = `"${ownersPhone}"`
-    transformedRow[ColumnMap.G] = `"${description}"`
+    transformedRow[ColumnMap.A] = firstName
+    transformedRow[ColumnMap.B] = lastName
+    transformedRow[ColumnMap.C] = email
+    transformedRow[ColumnMap.D] = ownersPhone
+    transformedRow[ColumnMap.G] = description
     transformedRow[ColumnMap.H] = `"${city}\nLandlord list"`
 
     return transformedRow
