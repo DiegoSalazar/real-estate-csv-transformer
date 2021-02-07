@@ -1,20 +1,20 @@
 import CsvFile from './CsvFile'
 import { ColumnMap } from './ColumnMap'
-import { TransformedCsv } from './models'
+import { CsvTransformation } from './models'
 
 export default class CsvTransformer {
-  output: TransformedCsv
+  transformation: CsvTransformation
   reader: FileReader
   fileContent: string
-  transformedContent: string
+  csvFile: CsvFile
   targetHeaders: Array<string>
   maxCols: number
 
-  constructor (output: TransformedCsv) {
-    this.output = output
+  constructor (transformation: CsvTransformation) {
+    this.transformation = transformation
     this.reader = new FileReader()
     this.fileContent = ''
-    this.transformedContent = ''
+    this.csvFile = new CsvFile('')
     this.targetHeaders = [
       'First Name',
       'Last Name',
@@ -29,48 +29,58 @@ export default class CsvTransformer {
   }
 
   transform (file: File) {
-    if (!file) return
-    this.reader.readAsText(file)
+    return new Promise((resolve, reject) => {
+      if (!file) return reject()
 
-    this.reader.onload = () => {
-      this.fileContent = this.reader.result?.toString() || ''
-      if (!this.fileContent) throw new Error('Failed to transform file')
+      this.reader.onload = () => {
+        this.fileContent = this.reader.result?.toString() || ''
+        if (!this.fileContent) throw new Error('Failed to transform file')
 
-      this.transformCsvFile()
-      this.output.transformedContent = this.transformedContent
-    }
-  }
+        this.csvFile = new CsvFile(this.fileContent)
+        this.transformation.input = this.csvFile
+        this.transformCsvFile()
 
-  display () {
-    this.output.transformedContent = this.transformedContent
+        resolve(this.transformation)
+      }
+      this.reader.readAsText(file)
+    })
   }
 
   transformCsvFile () {
-    const csv = new CsvFile(this.fileContent)
-    this.transformedContent += `${this.targetHeaders.join(',')}\n`
+    // this.transformation.output += `${this.targetHeaders.join(',')}\n`
+    this.transformation.output.headers = this.targetHeaders
 
-    csv.rows.forEach(row => {
+    this.csvFile.rows.forEach((row, i) => {
       const transformedRow = this.transformRow(row)
-      this.transformedContent += `${transformedRow.join(',')}\n`
+      // this.transformation.output += `${transformedRow.join(',')}\n`
+      this.transformation.output.rows[i] = transformedRow
     })
   }
 
   triggerDownload (file: File) {
     const baseFileName = file.name.replace('.csv', '')
     const tempEl = document.createElement('a')
-    const csvContent = encodeURI(this.transformedContent)
+    const csvContent = this.outputCsvContent()
+    const encoded = encodeURI(csvContent)
 
-    tempEl.href = `data:text/csv;charset=utf-8,${csvContent}`
+    tempEl.href = `data:text/csv;charset=utf-8,${encoded}`
     tempEl.download = `${baseFileName}-transformed.csv`
     tempEl.click()
   }
 
-  transformRow (row: Array<string>) {
+  outputCsvContent() {
+    const output = this.transformation.output
+    const rows = [output.headers, ...output.rows]
+
+    return rows.map((row) => row.join(',')).join('\n')
+  }
+
+  transformRow (row: string[]) {
     const address = row[ColumnMap.A]
     const city = row[ColumnMap.B]
-    const ownerName = row[ColumnMap.C]
-    const ownersPhones = row[ColumnMap.D].toString().split(';')
-    const emails = row[ColumnMap.E].toString().split(';')
+    const ownerName = row[ColumnMap.C] || ''
+    const ownersPhones = (row[ColumnMap.D] || '').split(';')
+    const emails = (row[ColumnMap.E] || '').split(';')
     const propShark = row[ColumnMap.F]
 
     const email = emails[0]

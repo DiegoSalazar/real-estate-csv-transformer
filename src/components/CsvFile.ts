@@ -1,7 +1,7 @@
 export default class CsvFile {
   data: string
-  headers: Array<string>
-  rows: Array<Array<string>>
+  headers: string[]
+  rows: string[][]
 
   constructor (data: string) {
     this.data = data
