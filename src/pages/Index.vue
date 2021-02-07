@@ -5,8 +5,8 @@
         <q-card class="flat bordered">
           <q-card-section>
             <q-input
+              @input="val => { file.f = val; ready = false }"
               filled
-              @input="fileInput"
               type="file"
               hint="Only PropertyShark CSV files are currently supported."
             />
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch } from '@vue/composition-api'
+import { defineComponent, reactive, ref } from '@vue/composition-api'
 import CsvTransformer from '../components/CsvTransformer'
 import CsvTable from '../components/CsvTable.vue'
 import { CsvTransformation } from '../components/models'
@@ -59,23 +59,16 @@ export default defineComponent({
   setup () {
     const file = reactive({ f: [], content: 'Loading...' })
     const ready = ref(false)
-    let transformer: CsvTransformer
-
     const transformation = reactive(<CsvTransformation>{
       input: new CsvFile(''),
       output: new CsvFile('')
     })
-
-    const fileInput = $event => {
-      file.f = $event
-      ready.value = false
-    }
+    let transformer: CsvTransformer
 
     const transform = async () => {
-      const f = file.f[0]
       ready.value = false
+      const f = file.f[0]
       transformer = new CsvTransformer(transformation)
-
       await transformer.transform(f)
       ready.value = true
     }
@@ -83,7 +76,6 @@ export default defineComponent({
     return {
       file,
       ready,
-      fileInput,
       transform,
       transformation,
       download: () => transformer.triggerDownload(file.f[0])
