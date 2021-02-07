@@ -59,21 +59,23 @@ export default defineComponent({
   setup () {
     const file = reactive({ f: [], content: 'Loading...' })
     const ready = ref(false)
+    let transformer: CsvTransformer
+
     const transformation = reactive(<CsvTransformation>{
       input: new CsvFile(''),
       output: new CsvFile('')
     })
-    let transformer: CsvTransformer
 
-    const fileInput = ($event) => {
+    const fileInput = $event => {
       file.f = $event
       ready.value = false
     }
 
     const transform = async () => {
-      ready.value = false
       const f = file.f[0]
+      ready.value = false
       transformer = new CsvTransformer(transformation)
+
       await transformer.transform(f)
       ready.value = true
     }
