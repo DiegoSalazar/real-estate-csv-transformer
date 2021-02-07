@@ -8,8 +8,10 @@
       <div class="col-1 q-table__title">{{ title }}</div>
       <q-btn
         v-if="showDownload"
+        color="secondary"
+        icon="download"
+        label="Download"
         @click="download"
-        color="secondary" icon="download" label="Download"
       />
     </template>
   </q-table>
@@ -51,7 +53,7 @@ export default defineComponent({
     const data = rows.reduce((arr: CsvHeaders[], row) => {
       const rowData = <CsvHeaders>{}
       const tableRow = headers.map((header: string, i) => {
-        rowData[header] = (row[i] || '').replace('"', '')
+        rowData[header] = (row[i] || '').replace(/"/g, '')
         return rowData
       })
       return arr.concat(tableRow)
