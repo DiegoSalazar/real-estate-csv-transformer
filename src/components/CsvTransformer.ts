@@ -78,14 +78,12 @@ export default class CsvTransformer {
   transformRow (row: string[]) {
     const address = row[ColumnMap.A]
     const city = row[ColumnMap.B]
-    const ownerName = row[ColumnMap.C] || ''
     const ownersPhones = (row[ColumnMap.D] || '').split(';')
     const emails = (row[ColumnMap.E] || '').split(';')
-    const propShark = row[ColumnMap.F]
-
     const email = emails[0]
+    const propShark = row[ColumnMap.F]
     let ownersPhone = ownersPhones[0]
-    let nameParts = ownerName.split(',')
+    let ownerName = row[ColumnMap.C] || ''
 
     let firstName = ''
     let lastName = ''
@@ -94,12 +92,14 @@ export default class CsvTransformer {
     let extraEmails: Array<string> = []
 
     if (ownerName.includes(',')) {
-      firstName = nameParts[1]
-      lastName = nameParts[0]
-    } else {
+      let nameParts = ownerName.split(/,\s?/g)
       nameParts = nameParts[0].split(' ')
-      firstName = nameParts[0]
-      lastName = nameParts[1]
+      lastName = nameParts.pop() || ''
+      firstName = nameParts.join(' ')
+    } else {
+      let nameParts = ownerName.split(' ')
+      lastName = nameParts.pop() || ''
+      firstName = nameParts.join(' ')
     }
 
     if (ownersPhones.length > 1) {

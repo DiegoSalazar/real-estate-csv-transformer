@@ -49,6 +49,7 @@ export default defineComponent({
         label: header,
         required: true,
         sortable: true,
+        align: 'left',
         field: (row: CsvHeaders) => row[header]
       }
     })
