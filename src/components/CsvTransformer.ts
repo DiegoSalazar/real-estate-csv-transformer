@@ -93,8 +93,7 @@ export default class CsvTransformer {
 
     if (ownerName.includes(',')) {
       let nameParts = ownerName.split(/,\s?/g)
-      nameParts = nameParts[0].split(' ')
-      lastName = nameParts.pop() || ''
+      lastName = nameParts.shift() || ''
       firstName = nameParts.join(' ')
     } else {
       const nameParts = ownerName.split(' ')
