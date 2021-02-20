@@ -82,8 +82,8 @@ export default class CsvTransformer {
     const emails = (row[ColumnMap.E] || '').split(';')
     const email = emails[0]
     const propShark = row[ColumnMap.F]
+    const ownerName = row[ColumnMap.C] || ''
     let ownersPhone = ownersPhones[0]
-    let ownerName = row[ColumnMap.C] || ''
 
     let firstName = ''
     let lastName = ''
@@ -97,7 +97,7 @@ export default class CsvTransformer {
       lastName = nameParts.pop() || ''
       firstName = nameParts.join(' ')
     } else {
-      let nameParts = ownerName.split(' ')
+      const nameParts = ownerName.split(' ')
       lastName = nameParts.pop() || ''
       firstName = nameParts.join(' ')
     }
